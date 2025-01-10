@@ -7,13 +7,60 @@
     <title>Chemist Connect Online Store</title>
 </head>
 <body>
-    <div class="top-division">
+    <header>
         <a href="homepage.html">
             <img src="../static/images/logo_landscape.png" alt="Logo" class="corner-image">
         </a>
-        <div class="auth-button">
-            <a href="#">Login</a>
+        <div class="search-bar">
+            <input type="text" placeholder="Search the catalogue...">
         </div>
+        <div class="header-icons">
+            <a href="#"><img src="../static/images/cart.png" alt="Cart" class="icon"></a>
+            <a href="#"><img src="../static/images/profile.png" alt="Profile" class="icon"></a>
+        </div>
+    </header>
+
+    <nav class="category-nav">
+        <a href="#">Incontinence</a>
+        <a href="#">Baby Care</a>
+        <a href="#">Beauty</a>
+        <a href="#">Medicine</a>
+        <a href="#">Supplements</a>
+        <a href="#">Skincare</a>
+        <a href="#">Our services</a>
+    </nav>
+
+    <div class="carousel">
+        <img src="https://cdn.printnetwork.com/production/assets/5966561450122033bd4456f8/imageLocker/blog-description/blog/sales_banners.jpg" alt="img" class="active">
+        <img src="https://www.ozihub.com/pub/media/catalog/product/cache/e4d64343b1bc593f1c5348fe05efa4a6/9/1/9188--x700120.png" alt="img">
+        <img src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/3ce709113389695.60269c221352f.jpg" alt="img">
     </div>
+
+    <div class="carousel-dots">
+        <button class="active" onclick="showSlide(0)"></button>
+        <button onclick="showSlide(1)"></button>
+        <button onclick="showSlide(2)"></button>
+    </div>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel img');
+        const dots = document.querySelectorAll('.carousel-dots button');
+
+        function showSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+
+            currentSlide = index;
+
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+
+        setInterval(() => {
+            const nextSlide = (currentSlide + 1) % slides.length;
+            showSlide(nextSlide);
+        }, 5000);
+    </script>
+
 </body>
 </html>
