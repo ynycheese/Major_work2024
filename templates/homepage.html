@@ -8,15 +8,15 @@
 </head>
 <body>
     <header>
-        <a href="homepage.html">
-            <img src="../static/images/logo_landscape.png" alt="Logo" class="corner-image">
+        <a href="{{ url_for('homepage' )}}">
+        <img src="{{ url_for('static', filename='images/logo_landscape.png')}} alt="Logo" class="corner-image">
         </a>
         <div class="search-bar">
             <input type="text" placeholder="Search the catalogue...">
         </div>
         <div class="header-icons">
-            <a href="#"><img src="../static/images/cart.png" alt="Cart" class="icon"></a>
-            <a href="#"><img src="../static/images/profile.png" alt="Profile" class="icon"></a>
+            <a href="#"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
+            <a href="#"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
         </div>
     </header>
 
@@ -40,6 +40,23 @@
         <button class="active" onclick="showSlide(0)"></button>
         <button onclick="showSlide(1)"></button>
         <button onclick="showSlide(2)"></button>
+    </div>
+
+    <h1>Best Sellers:</h1>
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <a href="#">
+                <img src="{{ url_for('static', filename='images/' + (product['image'] if product['image'] else 'default.png')) }}" 
+                alt="{{ product['product'] }}">           
+                <div class="product-name">{{ product['product']}}</div>
+                <div class="product-price">{{ product['price']}}</div>
+            </a>
+        </div>
+        {% endfor %}
+      </div>
+
+
     </div>
     <script>
         let currentSlide = 0;
