@@ -18,8 +18,11 @@ CREATE TABLE IF NOT EXISTS product_database (
 
 conn.commit()
 
+cursor.execute("DELETE FROM product_database")
+conn.commit()
+
 df = pd.read_csv(csv_file)
 df.to_sql('product_database', conn, if_exists='append', index=False)
 
-print('database established')
+print('Database updated')
 conn.close()

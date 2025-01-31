@@ -47,7 +47,7 @@
         {% for product in products %}
         <div class="product-card">
             <a href="#">
-                <img src="{{ url_for('static', filename='images/' + (product['image'] if product['image'] else 'default.png')) }}" 
+                <img src="{{ url_for('static', filename='images/product_images/' + (product['Image'] if product['Image'] else 'default.png')) }}" 
                 alt="{{ product['product'] }}">           
                 <div class="product-name">{{ product['product']}}</div>
                 <div class="product-price">{{ product['price']}}</div>
