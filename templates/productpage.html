@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/stylesheet.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemist Connect Online Store</title>
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('homepage' )}}">
+        <img src="{{ url_for('static', filename='images/logo_landscape.png')}} alt="Logo" class="corner-image">
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Search the catalogue...">
+        </div>
+        <div class="header-icons">
+            <a href="#"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
+            <a href="#"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
+        </div>
+    </header>
+
+    <nav class="category-nav">
+        <a href="#">Incontinence</a>
+        <a href="#">Baby Care</a>
+        <a href="#">Beauty</a>
+        <a href="#">Medicine</a>
+        <a href="#">Supplements</a>
+        <a href="#">Skincare</a>
+        <a href="#">Our services</a>
+    </nav>
+<!-- add product display. add availability. add reviews. -->
+
+     <div class="container">
+        <div class="product">
+            <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.product }}" class="product-image">
+            <div class="product-details">
+                <h2>{{ product.product }}</h2>
+                <p class="price">${{ "%.2f" | format(product.price) }}</p>
+                <p>Availability: {{ product.availability or "In stock" }}</p>
+                
+                <label for="quantity">Quantity:</label>
+                <div class="quantity-control">
+                    <button onclick="changeQty(-1)">&#9660;</button>
+                    <input type="number" id="quantity" value="1" min="1">
+                    <button onclick="changeQty(1)">&#9650;</button>
+                </div>
+
+                <!-- <button class="add-to-cart" onclick="addToCart('{{ product.id }}')">ADD TO CART 🛒</button> -->
+            </div>
+        </div>
+
+        <div class="product-info">
+            <h3>Product information:</h3>
+            <hr>
+            <p>{{ product.reviews or "No reviews yet." }}</p>
+        </div>
+    </div>
+
+</body>
+</html>

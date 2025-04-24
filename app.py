@@ -17,5 +17,17 @@ def homepage():
     connection.close()
     return render_template('homepage.html', products=products)
 
+@app.route('/product/<int:product_id>')
+def product_detail(product_id):
+    connection = get_db_connection()
+    product = connection.execute('SELECT * FROM product_database WHERE id = ?', (product_id,)).fetchone()
+    connection.close()
+
+    if product is None:
+        return "Product not found", 404
+
+    return render_template('productpage.html', product=product)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

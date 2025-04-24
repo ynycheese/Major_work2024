@@ -173,3 +173,51 @@ header a {
     font-weight: bold;
     margin-top: 5px;
 }
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.product {
+    display: flex;
+    gap: 30px;
+}
+
+.product-image {
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+    background: #e0ffe0;
+    border-radius: 10px;
+}
+
+.product-details {
+    flex: 1;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.quantity-control input {
+    width: 40px;
+    text-align: center;
+}
+
+.add-to-cart {
+    background-color: orange;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.product-info {
+    margin-top: 30px;
+}

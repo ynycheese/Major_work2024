@@ -46,7 +46,7 @@
     <div class="product-grid">
         {% for product in products %}
         <div class="product-card">
-            <a href="#">
+            <a href="{{ url_for('product_detail', product_id=product['id']) }}">
                 <img src="{{ url_for('static', filename='images/product_images/' + (product['Image'] if product['Image'] else 'default.png')) }}" 
                 alt="{{ product['product'] }}">           
                 <div class="product-name">{{ product['product']}}</div>
