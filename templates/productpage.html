@@ -33,17 +33,15 @@
 
      <div class="container">
         <div class="product">
-            <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.product }}" class="product-image">
+            <img src="{{ url_for('static', filename='images/product_images/' ~ product.image) }}" alt="{{ product.product }}" class="product-image">
             <div class="product-details">
                 <h2>{{ product.product }}</h2>
                 <p class="price">${{ "%.2f" | format(product.price) }}</p>
                 <p>Availability: {{ product.availability or "In stock" }}</p>
                 
                 <label for="quantity">Quantity:</label>
-                <div class="quantity-control">
-                    <button onclick="changeQty(-1)">&#9660;</button>
+                <div class="quantity-control">    
                     <input type="number" id="quantity" value="1" min="1">
-                    <button onclick="changeQty(1)">&#9650;</button>
                 </div>
 
                 <!-- <button class="add-to-cart" onclick="addToCart('{{ product.id }}')">ADD TO CART 🛒</button> -->
