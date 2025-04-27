@@ -9,13 +9,13 @@
 <body>
     <header>
         <a href="{{ url_for('homepage' )}}">
-        <img src="{{ url_for('static', filename='images/logo_landscape.png')}} alt="Logo" class="corner-image">
+        <img src="{{ url_for('static', filename='images/logo_landscape.png')}}" alt="Logo" class="corner-image">
         </a>
         <div class="search-bar">
             <input type="text" placeholder="Search the catalogue...">
         </div>
         <div class="header-icons">
-            <a href="#"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
+            <a href="{{ url_for('view_cart')}}"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
             <a href="#"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
         </div>
     </header>
@@ -43,8 +43,7 @@
                 <div class="quantity-control">    
                     <input type="number" id="quantity" value="1" min="1">
                 </div>
-
-                <!-- <button class="add-to-cart" onclick="addToCart('{{ product.id }}')">ADD TO CART 🛒</button> -->
+                <button onclick="addToCart('{{ product.id | tojson }}')">Add to Cart 🛒</button>
             </div>
         </div>
 
@@ -54,6 +53,24 @@
             <p>{{ product.reviews or "No reviews yet." }}</p>
         </div>
     </div>
+    <script>
+        function addToCart(productId) {
+            const quantity = document.getElementById('quantity').value;
 
+            fetch('/add_to_cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error('Error adding to cart:', error));
+        }
+    </script>
 </body>
 </html>

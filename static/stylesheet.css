@@ -221,3 +221,43 @@ header a {
 .product-info {
     margin-top: 30px;
 }
+
+h1 {
+    text-align: left;
+    margin-left: 20px;
+    margin-bottom: 30px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    max-width: 800px;
+    margin: 20px 50px;
+}
+
+ul li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+ul li:last-child {
+    border-bottom: none;
+}
+
+ul li img {
+    width: 60px;
+    height: auto;
+    margin-right: 20px;
+}
+
+ul li strong {
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+ul li span {
+    font-size: 14px;
+    color: #666;
+}

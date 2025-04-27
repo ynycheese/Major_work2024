@@ -15,7 +15,7 @@
             <input type="text" placeholder="Search the catalogue...">
         </div>
         <div class="header-icons">
-            <a href="#"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
+            <a href="{{ url_for('view_cart')}}"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
             <a href="#"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
         </div>
     </header>
@@ -50,7 +50,7 @@
                 <img src="{{ url_for('static', filename='images/product_images/' + (product['Image'] if product['Image'] else 'default.png')) }}" 
                 alt="{{ product['product'] }}">           
                 <div class="product-name">{{ product['product']}}</div>
-                <div class="product-price">{{ product['price']}}</div>
+                <div class="product-price">${{ product['price']}}</div>
             </a>
         </div>
         {% endfor %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../static/stylesheet.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemist Connect Online Store</title>
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('homepage' )}}">
+        <img src="{{ url_for('static', filename='images/logo_landscape.png')}}" alt="Logo" class="corner-image">
+        </a>
+        <div class="search-bar">
+            <input type="text" placeholder="Search the catalogue...">
+        </div>
+        <div class="header-icons">
+            <a href="{{ url_for('view_cart')}}"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
+            <a href="#"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
+        </div>
+    </header>
+
+    <nav class="category-nav">
+        <a href="#">Incontinence</a>
+        <a href="#">Baby Care</a>
+        <a href="#">Beauty</a>
+        <a href="#">Medicine</a>
+        <a href="#">Supplements</a>
+        <a href="#">Skincare</a>
+        <a href="#">Our services</a>
+    </nav>
+
+    <h1>Items In Your Cart:</h1>
+    <ul>
+        {% for item in cart %}
+          <li>
+            <img src="{{ url_for('static', filename='images/product_images/' ~ item.image) }}" width="100">
+            <strong>{{ item.product }}</strong> - ${{ item.price }} × {{ item.quantity }}
+          </li>
+        {% endfor %}
+      </ul>
+      
+      <div class="cart-summary">
+        <h2>Cart Summary</h2>
+        <p>Subtotal: ${{ subtotal }}</p>
+        {% if discount > 0 %}
+            <p>Discount: -${{ discount }}</p>
+        {% endif %}
+        <h3>Total: ${{ total }}</h3>
+    </div>
+</body>
+</html>
