@@ -67,14 +67,10 @@ def view_cart():
             product['quantity'] = quantity
             product_list.append(product)
     
-    subtotal = sum(item['price'] * item['quantity'] for item in cart)
-    
-    # Example: 10% discount if subtotal > $100
+    subtotal = round(sum(item['price'] * item['quantity'] for item in product_list),2)
     discount = 0
-    if subtotal > 100:
-        discount = subtotal * 0.10
 
-    total = subtotal - discount
+    total = (subtotal - discount)
 
     connection.close()
     return render_template('cartpage.html', cart=product_list, subtotal=subtotal,discount=discount, total=total)

@@ -261,3 +261,19 @@ ul li span {
     font-size: 14px;
     color: #666;
 }
+
+.cart-summary {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    border-top: 2px solid #ccc;
+    font-size: 18px;
+}
+
+.cart-summary h2, .cart-summary h3 {
+    margin: 10px 0;
+}
+
+.cart-summary p {
+    margin: 5px 0;
+}
