@@ -75,6 +75,18 @@ def view_cart():
     connection.close()
     return render_template('cartpage.html', cart=product_list, subtotal=subtotal,discount=discount, total=total)
 
+@app.route('/search')
+def search():
+    query = request.args.get('query', '')
+
+    connection = get_db_connection()
+    results = connection.execute(
+        "SELECT * FROM product_database WHERE product LIKE ?",
+        ('%' + query + '%',)
+    ).fetchall()
+    connection.close()
+
+    return render_template('searchresults.html', query=query, results=results)
 
 if __name__ == '__main__':
     app.run(debug=True)
