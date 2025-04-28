@@ -30,25 +30,6 @@
         <a href="#">Our services</a>
     </nav>
 
-    <h1>Items In Your Cart:</h1>
-    <ul>
-        {% for item in cart %}
-          <li>
-            <img src="{{ url_for('static', filename='images/product_images/' ~ item.image) }}" width="100">
-            <strong>{{ item.product }}</strong> - ${{ item.price }} × {{ item.quantity }}
-          </li>
-        {% endfor %}
-      </ul>
-      
-      <div class="cart-summary">
-        <h2>Cart Summary</h2>
-        <p>Subtotal: ${{ subtotal }}</p>
-        {% if discount > 0 %}
-            <p>Discount: -${{ discount }}</p>
-        {% endif %}
-        <h3>Total: ${{ total }}</h3>
-    </div>
-
     <footer class="site-footer">
         <div class="footer-links">
             <a href="#">Return Policies</a>
@@ -59,5 +40,6 @@
         </div>
         <p class="footer-text">© 2025 Chemist Connect. All rights reserved.</p>
     </footer>
+    
 </body>
 </html>

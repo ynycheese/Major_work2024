@@ -19,6 +19,18 @@ CREATE TABLE IF NOT EXISTS product_database (
     )"""
 )
 
+# have to find a way to create a strong user id 
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users_database (
+    id INTERGER PRIMARY KEY, 
+    name TEXT NOT NULL,
+    mobile TEXT NOT NULL,
+    email TEXT NOT NULL,
+    address TEXT NOT NULL,
+    
+               )"""
+)
+
 conn.commit()
 
 cursor.execute("DELETE FROM product_database")
