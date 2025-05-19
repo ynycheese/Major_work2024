@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, session, request, make_response, send_from_directory
 from flask import request, jsonify, make_response
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import sqlite3
 import os
@@ -88,5 +89,55 @@ def search():
 
     return render_template('searchresults.html', query=query, results=results)
 
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        connection = get_db_connection()
+        user = connection.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        connection.close()
+
+        if user and check_password_hash(user['password'], password):
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            return redirect(url_for('homepage'))
+        else:
+            error = 'Invalid username or password.'
+
+    return render_template('loginpage.html', error=error)
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = generate_password_hash(request.form['password'])
+
+        connection = get_db_connection()
+        try:
+            connection.execute(
+                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+                (username, email, password)
+            )
+            connection.commit()
+            connection.close()
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            connection.close()
+            error = 'Username or email already exists.'
+
+    return render_template('signuppage.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('homepage'))
+
 if __name__ == '__main__':
     app.run(debug=True)
+

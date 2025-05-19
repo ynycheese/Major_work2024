@@ -41,5 +41,4 @@ df.to_sql('product_database', conn, if_exists='append', index=False)
 
 print('Database updated')
 
-
 conn.close()

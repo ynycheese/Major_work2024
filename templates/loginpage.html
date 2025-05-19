@@ -16,7 +16,7 @@
                 <input type="text" name="query" placeholder="Search the catalogue...">
                 <button type="submit" class="search-button">🔍</button>
             </form>
-        </div>        
+        </div>
         <div class="header-icons">
             <a href="{{ url_for('view_cart')}}"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
             <a href="{{ url_for('login')}}"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
@@ -33,34 +33,15 @@
         <a href="#">Our services</a>
     </nav>
 
-    <h1>Items In Your Cart:</h1>
-    <ul>
-        {% for item in cart %}
-          <li>
-            <img src="{{ url_for('static', filename='images/product_images/' ~ item.image) }}" width="100">
-            <strong>{{ item.product }}</strong> - ${{ item.price }} × {{ item.quantity }}
-          </li>
-        {% endfor %}
-      </ul>
-      
-      <div class="cart-summary">
-        <h2>Cart Summary</h2>
-        <p>Subtotal: ${{ subtotal }}</p>
-        {% if discount > 0 %}
-            <p>Discount: -${{ discount }}</p>
-        {% endif %}
-        <h3>Total: ${{ total }}</h3>
+    <div class="form-container">
+        <h2>Login</h2>
+        {% if error %}<p class="error">{{ error }}</p>{% endif %}
+        <form method="post">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up</a></p>
     </div>
-
-    <footer class="site-footer">
-        <div class="footer-links">
-            <a href="#">Return Policies</a>
-            <a href="#">About Us</a>
-            <a href="#">Store Locations</a>
-            <a href="#">Help & Support</a>
-            <a href="#">Contact Us</a>
-        </div>
-        <p class="footer-text">© 2025 Chemist Connect. All rights reserved.</p>
-    </footer>
 </body>
 </html>
