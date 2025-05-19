@@ -98,7 +98,7 @@ def login():
         password = request.form['password']
 
         connection = get_db_connection()
-        user = connection.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        user = connection.execute('SELECT * FROM users_database WHERE username = ?', (username,)).fetchone()
         connection.close()
 
         if user and check_password_hash(user['password'], password):
@@ -121,7 +121,7 @@ def signup():
         connection = get_db_connection()
         try:
             connection.execute(
-                'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
+                'INSERT INTO users_database (username, email, password) VALUES (?, ?, ?)',
                 (username, email, password)
             )
             connection.commit()

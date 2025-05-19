@@ -22,13 +22,12 @@ CREATE TABLE IF NOT EXISTS product_database (
 # have to find a way to create a strong user id 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users_database (
-    id INTERGER PRIMARY KEY, 
+    id INTEGER PRIMARY KEY, 
     name TEXT NOT NULL,
-    mobile TEXT NOT NULL,
-    email TEXT NOT NULL,
-    address TEXT NOT NULL,
-    
-               )"""
+    mobile TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    address TEXT NOT NULL
+    )"""
 )
 
 conn.commit()
