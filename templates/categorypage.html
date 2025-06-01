@@ -33,27 +33,7 @@
         <a href="#">Our services</a>
     </nav>
     
-    <div class="container">
-        <h1>Search Results for "{{ query }}"</h1>
-
-        {% if results %}
-            <div class="product-grid">
-                {% for product in results %}
-                <div class="product-card">
-                    <a href="{{ url_for('product_detail', product_id=product['id']) }}">
-                        <img src="{{ url_for('static', filename='images/product_images/' ~ product['image']) }}" alt="{{ product['product_name'] }}">
-                        <div class="product-name">{{ product['Product'] }}</div>
-                        <div class="product-price">${{ product['price'] }}</div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No products found matching your search.</p>
-        {% endif %}
-    </div>
-
-    <footer class="site-footer">
+       <footer class="site-footer">
         <div class="footer-links">
             <a href="{{ url_for('returns')}}">Return Policies</a>
             <a href="#">About Us</a>
@@ -63,6 +43,5 @@
         </div>
         <p class="footer-text">© 2025 Chemist Connect. All rights reserved.</p>
     </footer>
-    
 </body>
 </html>

@@ -149,6 +149,10 @@ def logout():
 def returns():
     return render_template('returnspolicypage.html')
 
+@app.route('/contactus')
+def contactus():
+    return render_template('contactuspage.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
 
