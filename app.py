@@ -89,7 +89,6 @@ def search():
 
     return render_template('searchresults.html', query=query, results=results)
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -114,15 +113,23 @@ def login():
 def signup():
     error = None
     if request.method == 'POST':
-        username = request.form['username']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
         email = request.form['email']
-        password = generate_password_hash(request.form['password'])
+        confirmed_password = request.form['confirmed_password']
+        password = request.form['password']
+
+        if password != confirmed_password:
+            error = 'Passwords do not match.'
+            return render_template('signuppage.html', error=error)
+
+        hashed_password = generate_password_hash(password)
 
         connection = get_db_connection()
         try:
             connection.execute(
-                'INSERT INTO users_database (username, email, password) VALUES (?, ?, ?)',
-                (username, email, password)
+                'INSERT INTO users_database (first_name, last_name, email, password) VALUES (?, ?, ?, ?)',
+                (first_name, last_name, email, hashed_password)
             )
             connection.commit()
             connection.close()
@@ -137,6 +144,10 @@ def signup():
 def logout():
     session.clear()
     return redirect(url_for('homepage'))
+
+@app.route('/returns')
+def returns():
+    return render_template('returnspolicypage.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

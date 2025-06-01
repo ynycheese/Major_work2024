@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS product_database (
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users_database (
     id INTEGER PRIMARY KEY, 
-    name TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
     mobile TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     address TEXT NOT NULL

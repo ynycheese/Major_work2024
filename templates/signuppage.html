@@ -36,12 +36,24 @@
         <h2>Sign Up</h2>
         {% if error %}<p class="error">{{ error }}</p>{% endif %}
         <form method="post">
-            <input type="text" name="username" placeholder="Username" required>
+            <input type="text" name="first_name" placeholder="First Name" required>
+            <input type="text" name="last_name" placeholder="Last Name" required>
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirmed_password" placeholder="Confirm Passwrd" required>
             <button type="submit">Sign Up</button>
         </form>
         <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
     </div>
+        <footer class="site-footer">
+        <div class="footer-links">
+            <a href="#">Return Policies</a>
+            <a href="#">About Us</a>
+            <a href="#">Store Locations</a>
+            <a href="#">Help & Support</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <p class="footer-text">© 2025 Chemist Connect. All rights reserved.</p>
+    </footer>
 </body>
 </html>
