@@ -153,6 +153,10 @@ def returns():
 def contactus():
     return render_template('contactuspage.html')
 
+@app.route('/adminlogin')
+def adminlogin():
+    return render_template('adminlogin.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
 

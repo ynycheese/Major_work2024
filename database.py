@@ -25,11 +25,28 @@ CREATE TABLE IF NOT EXISTS users_database (
     id INTEGER PRIMARY KEY, 
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
+    password TEXT NOT NULL,
     mobile TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
-    address TEXT NOT NULL
+    address TEXT NOT NULL,
+    points INTEGER NOT NULL
     )"""
 )
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS admin_database (
+    id INTEGER PRIMARY KEY,
+    employee_name TEXT NOT NULL,
+    password TEXT NOT NULL,
+    access SMALL INTERGER NOT NULL,
+    )"""
+)
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS orders (
+    id INTERGER PRIMARY KEY,
+    order)
+""")
 
 conn.commit()
 
