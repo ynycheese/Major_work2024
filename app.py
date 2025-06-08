@@ -157,6 +157,18 @@ def contactus():
 def adminlogin():
     return render_template('adminlogin.html')
 
+@app.route('/category/<category_name>')
+def categorypage(category_name):
+    connection = get_db_connection()
+    products = connection.execute(
+        'select * from product_database where category = ?', (category_name,)).fetchall()
+    connection.close()
+
+    if not products:
+        return render_template('categorypage.html', category=category_name, products=[], empty=True)
+    return render_template('categorypage.html', category=category_name,products=products, empty=False)
+    
+
 if __name__ == '__main__':
     app.run(debug=True)
 

@@ -38,15 +38,18 @@ CREATE TABLE IF NOT EXISTS admin_database (
     id INTEGER PRIMARY KEY,
     employee_name TEXT NOT NULL,
     password TEXT NOT NULL,
-    access SMALL INTERGER NOT NULL,
+    access SMALL INTERGER NOT NULL
     )"""
 )
 
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS orders (
-    id INTERGER PRIMARY KEY,
-    order)
-""")
+CREATE TABLE IF NOT EXISTS orders_database (
+    id INTEGER PRIMARY KEY,
+    customer_order TEXT 
+    )"""
+)
+
+
 
 conn.commit()
 
