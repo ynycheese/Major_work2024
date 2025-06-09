@@ -19,13 +19,13 @@
         </div>
         <div class="header-icons">
             <a href="{{ url_for('view_cart')}}"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
-            <a href="{{ url_for('login')}}"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
+            <a href="{{ url_for('profile') if session.get('user_id') else url_for('login' )}}"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
         </div>
     </header>
 
     <nav class="category-nav">
         <a href="#">Incontinence</a>
-        <a href="{{ url_for('category_page', category_name='Baby Products')}}">Baby Care</a>
+        <a href="{{ url_for('categorypage', category_name='Baby Products')}}">Baby Care</a>
         <a href="#">Beauty</a>
         <a href="#">Medicine</a>
         <a href="#">Supplements</a>

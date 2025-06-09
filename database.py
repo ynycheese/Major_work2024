@@ -13,8 +13,7 @@ CREATE TABLE IF NOT EXISTS product_database (
     product TEXT NOT NULL,
     price INTEGER REAL NOT NULL,
     image TEXT,
-    stock INTEGER,
-    reviews TEXT
+    stock INTEGER
                
     )"""
 )
@@ -26,10 +25,10 @@ CREATE TABLE IF NOT EXISTS users_database (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     password TEXT NOT NULL,
-    mobile TEXT NOT NULL UNIQUE,
+    mobile TEXT UNIQUE,
     email TEXT NOT NULL UNIQUE,
-    address TEXT NOT NULL,
-    points INTEGER NOT NULL
+    address TEXT,
+    points INTEGER
     )"""
 )
 
@@ -38,7 +37,7 @@ CREATE TABLE IF NOT EXISTS admin_database (
     id INTEGER PRIMARY KEY,
     employee_name TEXT NOT NULL,
     password TEXT NOT NULL,
-    access SMALL INTERGER NOT NULL
+    access INTEGER NOT NULL
     )"""
 )
 

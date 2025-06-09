@@ -93,19 +93,19 @@ def search():
 def login():
     error = None
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
 
         connection = get_db_connection()
-        user = connection.execute('SELECT * FROM users_database WHERE username = ?', (username,)).fetchone()
+        user = connection.execute('SELECT * FROM users_database WHERE email = ?', (email,)).fetchone()
         connection.close()
 
         if user and check_password_hash(user['password'], password):
             session['user_id'] = user['id']
-            session['username'] = user['username']
+            session['email'] = user['email']
             return redirect(url_for('homepage'))
         else:
-            error = 'Invalid username or password.'
+            error = 'Invalid email or password.'
 
     return render_template('loginpage.html', error=error)
 
@@ -113,9 +113,9 @@ def login():
 def signup():
     error = None
     if request.method == 'POST':
-        first_name = request.form['first_name']
-        last_name = request.form['last_name']
-        email = request.form['email']
+        first_name = request.form['first_name'].strip().lower()
+        last_name = request.form['last_name'].strip().lower()
+        email = request.form['email'].strip().lower()
         confirmed_password = request.form['confirmed_password']
         password = request.form['password']
 
@@ -124,21 +124,31 @@ def signup():
             return render_template('signuppage.html', error=error)
 
         hashed_password = generate_password_hash(password)
-
         connection = get_db_connection()
+
+        existing_user = connection.execute(
+            'SELECT * FROM users_database WHERE email = ?', (email,)
+        ).fetchone()
+
+        if existing_user:
+            error = 'Email already exists.'
+            connection.close()
+            return render_template('signuppage.html', error=error)
+
         try:
             connection.execute(
                 'INSERT INTO users_database (first_name, last_name, email, password) VALUES (?, ?, ?, ?)',
                 (first_name, last_name, email, hashed_password)
             )
             connection.commit()
-            connection.close()
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
+            error = 'An unexpected error occurred.'
+        finally:
             connection.close()
-            error = 'Username or email already exists.'
 
     return render_template('signuppage.html', error=error)
+
 
 @app.route('/logout')
 def logout():
@@ -168,6 +178,18 @@ def categorypage(category_name):
         return render_template('categorypage.html', category=category_name, products=[], empty=True)
     return render_template('categorypage.html', category=category_name,products=products, empty=False)
     
+
+@app.route('/profile')
+def profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    connection = get_db_connection()
+    user = connection.execute(
+        'select * from users_database where id=?', (session['user_id'],)).fetchone()
+    connection.close()
+    
+    return render_template('profilepage.html',user=user)
 
 if __name__ == '__main__':
     app.run(debug=True)
