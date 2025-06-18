@@ -109,6 +109,7 @@ def login():
 
     return render_template('loginpage.html', error=error)
 
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     error = None
@@ -150,7 +151,7 @@ def signup():
     return render_template('signuppage.html', error=error)
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET','POST'])
 def logout():
     session.clear()
     return redirect(url_for('homepage'))
@@ -190,6 +191,11 @@ def profile():
     connection.close()
     
     return render_template('profilepage.html',user=user)
+
+@app.route('/addaccess')
+def addaccess():
+     return render_template('addaccess.html')
+# do this. 
 
 if __name__ == '__main__':
     app.run(debug=True)

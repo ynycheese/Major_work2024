@@ -42,11 +42,30 @@ CREATE TABLE IF NOT EXISTS admin_database (
 )
 
 cursor.execute("""
-CREATE TABLE IF NOT EXISTS orders_database (
-    id INTEGER PRIMARY KEY,
-    customer_order TEXT 
+CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    guest_name TEXT,
+    guest_email TEXT,
+    order_date TEXT,
+    status TEXT DEFAULT 'Pending',
+    total_amount REAL,
+    pickup_location TEXT,
+    FOREIGN KEY(user_id) REFERENCES users(id)
     )"""
 )
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS order_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER,
+    product_id INTEGER,
+    quantity INTEGER,
+    price REAL,
+    FOREIGN KEY(order_id) REFERENCES orders(id),
+    FOREIGN KEY(product_id) REFERENCES product_database(id)
+)
+""")
 
 
 
