@@ -107,6 +107,16 @@ window.onclick = function(event) {
     }
   }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const searchForm = document.querySelector('.search-bar form');
+    searchForm.addEventListener('submit', function (e) {
+        const input = searchForm.querySelector('input[name="query"]');
+        if (!input.value.trim()) {
+            e.preventDefault();  // Prevent form submission
+        }
+    });
+});
     </script>
     <footer class="site-footer">
         <div class="footer-links">

@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import sqlite3
 import os
+import datetime
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'default_key')
@@ -40,7 +41,6 @@ def add_to_cart():
     product_id = str(data['productId'])
     quantity = int(data['quantity'])
 
-    # Update quantity or add new item
     if product_id in cart_data:
         cart_data[product_id] += quantity
     else:
@@ -164,9 +164,40 @@ def returns():
 def contactus():
     return render_template('contactuspage.html')
 
-@app.route('/adminlogin')
+@app.route('/adminlogin', methods=['GET', 'POST'])
 def adminlogin():
-    return render_template('adminlogin.html')
+    error = None
+    if request.method == 'POST':
+        employee_name = request.form['employee_name']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        admin = conn.execute('SELECT * FROM admin_database WHERE employee_name = ?', (employee_name,)).fetchone()
+        conn.close()
+
+        if admin and check_password_hash(admin['password'], password):
+            session['admin_id'] = admin['id']
+            session['admin_name'] = admin['employee_name']
+            return redirect(url_for('admindashboard'))
+        else:
+            error = 'Invalid credentials.'
+
+    return render_template('adminlogin.html', error=error)
+
+
+@app.route('/admin')
+def admindashboard():
+    if 'admin_id' not in session:
+        return redirect(url_for('adminlogin'))
+    
+    return render_template('admindashboard.html', username=session.get('admin_username'))
+
+
+@app.route('/adminlogout')
+def adminlogout():
+    session.pop('admin_id', None)
+    session.pop('admin_username', None)
+    return redirect(url_for('homepage'))
 
 @app.route('/category/<category_name>')
 def categorypage(category_name):
@@ -192,11 +223,63 @@ def profile():
     
     return render_template('profilepage.html',user=user)
 
-@app.route('/addaccess')
-def addaccess():
-     return render_template('addaccess.html')
-# do this. 
+
+
+@app.route('/checkout', methods=['POST'])
+def checkout():
+    user_id = session.get('user_id')
+    guest_name = request.form.get('guest_name') if not user_id else None
+    guest_email = request.form.get('guest_email') if not user_id else None
+
+    pickup_location = request.form['pickup_location']
+    cart = get_cart()
+    total_amount = sum(item['price'] * item['quantity'] for item in cart)
+
+    conn = sqlite3.connect('website_database.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO orders (user_id, guest_name, guest_email, order_date, total_amount, pickup_location)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (user_id, guest_name, guest_email, datetime.now().isoformat(), total_amount, pickup_location))
+
+    order_id = cursor.lastrowid
+
+    for item in cart:
+        cursor.execute("""
+            INSERT INTO order_items (order_id, product_id, quantity, price)
+            VALUES (?, ?, ?, ?)
+        """, (order_id, item['product_id'], item['quantity'], item['price']))
+
+    conn.commit()
+    conn.close()
+
+    resp = make_response("Order placed successfully!")
+    resp.set_cookie('cart','', max_age=0)
+    return resp
+    return "Order placed successfully!"
+
+
+def get_cart(): 
+    cart_cookie = request.cookies.get('cart')
+    cart_data = json.loads(cart_cookie) if cart_cookie else {}
+
+    connection = get_db_connection()
+    cart_items = []
+
+    for product_id, quantity in cart_data.items():
+        product = connection.execute(
+            'select * from product_databse where id =?', (product_id,)).fetchone()
+        if product:
+            item = dict(product)
+            item['product_id'] = product['id']
+            item['quantity'] = quantity
+            cart_items.append(item)
+
+    connection.close()
+    return cart_items
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(ssl_context=('cert.pem', 'key.pem'), debug=True)
+
 
