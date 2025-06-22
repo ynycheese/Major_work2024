@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Manage Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+</head>
+<body>
+    <h1>Manage Products</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Edit</th>
+        </tr>
+        {% for p in products %}
+        <tr>
+            <td>{{ p['id'] }}</td>
+            <td>{{ p['product'] }}</td>
+            <td>${{ p['price'] }}</td>
+            <td>{{ p['category'] }}</td>
+            <td><a href="{{ url_for('edit_product', product_id=p['id']) }}">Edit</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -294,15 +294,25 @@ def view_all_orders():
     sort_order = request.args.get('sort', 'desc').lower()
     if sort_order not in ['asc', 'desc']:
         sort_order = 'desc'
-
+    pickup_filters = request.args.getlist('pickup') 
+    
     connection = get_db_connection()
+
+    all_pickups = [row['pickup_location'] for row in connection.execute('SELECT DISTINCT pickup_location FROM orders').fetchall()]
+
+
+    if not pickup_filters:
+        pickup_filters = all_pickups
+
+    placeholders = ','.join('?' for _ in pickup_filters)
 
     orders = connection.execute(f'''
         SELECT o.*, u.first_name, u.last_name, u.email
         FROM orders o
         LEFT JOIN users_database u ON o.user_id = u.id
+        WHERE o.pickup_location IN ({placeholders})
         ORDER BY o.order_date {sort_order.upper()}
-    ''').fetchall()
+    ''', pickup_filters).fetchall()
 
     orders_with_items = []
     for order in orders:
@@ -320,7 +330,55 @@ def view_all_orders():
 
     connection.close()
 
-    return render_template('adminorders.html', all_orders=orders_with_items, current_sort=sort_order)
+    return render_template(
+        'adminorders.html', 
+        all_orders=orders_with_items, 
+        current_sort=sort_order, 
+        all_pickups=all_pickups,
+        pickup_filters=pickup_filters
+    )
+
+@app.route('/admin/products')
+def admin_products():
+    if 'admin_id' not in session:
+        return redirect(url_for('adminlogin'))
+    
+    connection = get_db_connection()
+    products = connection.execute('SELECT * FROM product_database').fetchall()
+    connection.close()
+    
+    return render_template('adminproducts.html', products=products)
+
+@app.route('/admin/products/edit/<int:product_id>', methods=['GET', 'POST'])
+def edit_product(product_id):
+    if 'admin_id' not in session:
+        return redirect(url_for('adminlogin'))
+
+    connection = get_db_connection()
+
+    if request.method == 'POST':
+        product = request.form['product']
+        price = float(request.form['price'])
+        category = request.form['category']
+        stock = int(request.form['stock'])
+
+        connection.execute('''
+            UPDATE product_database
+            SET product = ?, price = ?, category = ?, stock = ?
+            WHERE id = ?
+        ''', (product, price, category, stock, product_id))
+        connection.commit()
+        connection.close()
+        return redirect(url_for('admin_products'))
+
+    product = connection.execute('SELECT * FROM product_database WHERE id = ?', (product_id,)).fetchone()
+    connection.close()
+
+    if product is None:
+        return "Product not found", 404
+
+    return render_template('editproduct.html', product=product)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -14,13 +14,51 @@
 
         <div class="container" style="margin-top: 70px;">
             <h1>All Orders</h1>
-            <form method="GET" id="sortForm">
+    <form method="GET" id="filterForm">
         <label for="sortSelect">Sort by date:</label>
-        <select name="sort" id="sortSelect" onchange="document.getElementById('sortForm').submit()">
+        <select name="sort" id="sortSelect" onchange="document.getElementById('filterForm').submit()">
             <option value="desc" {% if current_sort == 'desc' %}selected{% endif %}>Newest First</option>
             <option value="asc" {% if current_sort == 'asc' %}selected{% endif %}>Oldest First</option>
         </select>
-            </form>
+
+        <div class="dropdown" style="display: inline-block; position: relative; margin-left: 20px;">
+            <button type="button" onclick="toggleDropdown()" class="dropbtn">Filter by Pickup Location ▼</button>
+            <div id="dropdownContent" class="dropdown-content" style="display:none; position: absolute; background: white; border: 1px solid #ccc; padding: 10px; max-height: 200px; overflow-y: auto; z-index: 100;">
+                {% for location in all_pickups %}
+                    <label>
+                        <input type="checkbox" name="pickup" value="{{ location }}" 
+                            {% if location in pickup_filters %}checked{% endif %} onchange="document.getElementById('filterForm').submit()">
+                        {{ location }}
+                    </label><br>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+
+    <script>
+    function toggleDropdown() {
+        var content = document.getElementById("dropdownContent");
+        if (content.style.display === "none" || content.style.display === "") {
+            content.style.display = "block";
+        } else {
+            content.style.display = "none";
+        }
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.style.display === "block") {
+                    openDropdown.style.display = "none";
+                }
+            }
+        }
+    }
+    </script>
+
+
 
     {% for entry in all_orders %}
     <div class="order">
