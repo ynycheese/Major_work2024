@@ -4,10 +4,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import sqlite3
 import os
-import datetime
+from datetime import datetime, timedelta
+
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'default_key')
+
+app.config['SESSION_PERMANENT'] = False 
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
 
 def get_db_connection():
     connection = sqlite3.connect('website_database.db')
@@ -190,14 +194,14 @@ def admindashboard():
     if 'admin_id' not in session:
         return redirect(url_for('adminlogin'))
     
-    return render_template('admindashboard.html', username=session.get('admin_username'))
+    return render_template('admindashboard.html', username=session.get('admin_name'))
 
 
 @app.route('/adminlogout')
 def adminlogout():
     session.pop('admin_id', None)
-    session.pop('admin_username', None)
-    return redirect(url_for('homepage'))
+    session.pop('admin_name', None)
+    return '', 204 
 
 @app.route('/category/<category_name>')
 def categorypage(category_name):
@@ -257,7 +261,6 @@ def checkout():
     resp = make_response("Order placed successfully!")
     resp.set_cookie('cart','', max_age=0)
     return resp
-    return "Order placed successfully!"
 
 
 def get_cart(): 
@@ -269,7 +272,7 @@ def get_cart():
 
     for product_id, quantity in cart_data.items():
         product = connection.execute(
-            'select * from product_databse where id =?', (product_id,)).fetchone()
+            'select * from product_database where id =?', (product_id,)).fetchone()
         if product:
             item = dict(product)
             item['product_id'] = product['id']

@@ -27,4 +27,10 @@
         <a href="#">Analytics</a>
     </div>
 
+    <script>
+  window.addEventListener("beforeunload", function () {
+    navigator.sendBeacon("/adminlogout");
+  });
+</script>
 </body>
+</html>
