@@ -9,28 +9,31 @@
 <body>
     <div class="topbar">
         <div class="title">Master Admin</div>
-        <div class="dropdown">
-            <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Laravel Admin
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Logout</a></li>
-            </ul>
         </div>
     </div>
 
     <div class="sidebar">
         <a href="#">Dashboard</a>
-        <a href="#">View Orders</a>
+        <a href="{{ url_for('view_all_orders')}}">View Orders</a>
         <a href="#">Edit Products</a>
         <a href="#">Team Management</a>
         <a href="#">Analytics</a>
+        <a href="#">Log Out</a>
     </div>
 
-    <script>
-  window.addEventListener("beforeunload", function () {
-    navigator.sendBeacon("/adminlogout");
-  });
+{% if session.get('admin_id') %}
+<script>
+    if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+        fetch('/adminlogout', { method: 'POST' }).then(() => {
+            location.href = "/adminlogin"; 
+        });
+    }
+    window.addEventListener('unload', function () {
+        navigator.sendBeacon('/adminlogout');
+    });
 </script>
+{% endif %}
+
+
 </body>
 </html>

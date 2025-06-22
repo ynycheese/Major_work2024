@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - All Orders</title>
+</head>
+<body>
+    <div class="topbar">
+        <div class="title">Admin Dashboard - All Orders</div>
+        <a href="{{ url_for('admindashboard') }}" style="color: white; text-decoration: underline;">Back</a>
+    </div>
+
+        <div class="container" style="margin-top: 70px;">
+            <h1>All Orders</h1>
+            <form method="GET" id="sortForm">
+        <label for="sortSelect">Sort by date:</label>
+        <select name="sort" id="sortSelect" onchange="document.getElementById('sortForm').submit()">
+            <option value="desc" {% if current_sort == 'desc' %}selected{% endif %}>Newest First</option>
+            <option value="asc" {% if current_sort == 'asc' %}selected{% endif %}>Oldest First</option>
+        </select>
+            </form>
+
+    {% for entry in all_orders %}
+    <div class="order">
+        <h3>Order #{{ entry['order']['id'] }} - {{ entry['order']['order_date']|datetimeformat }}</h3>
+        <p>User ID: {{ entry['order']['user_id'] or 'Guest' }}</p>
+        {% if entry['order']['user_id'] %}
+            <p>Name: {{ entry['order']['first_name']|capitalize }} {{ entry['order']['last_name']|capitalize }}</p>
+            <p>Email: {{ entry['order']['email'] }}</p>
+        {% else %}
+            <p>Name: {{ entry['order']['guest_name'] or 'Guest' }}</p>
+            <p>Email: {{ entry['order']['guest_email'] or 'Guest' }}</p>
+        {% endif %}
+        <p>Pickup Location: {{ entry['order']['pickup_location'] }}</p>
+        <p>Total: ${{ entry['order']['total_amount'] }}</p>
+
+        <ul>
+            {% for item in entry['items'] %}
+                <li>{{ item['product'] }} – Quantity: {{ item['quantity'] }} – Price: ${{ item['price'] }}</li>
+            {% endfor %}
+        </ul>
+        <hr>
+    </div>
+    {% else %}
+        <p>No orders found.</p>
+    {% endfor %}
+
+    </div>
+</body>
+</html>

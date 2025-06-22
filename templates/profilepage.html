@@ -34,9 +34,32 @@
     </nav>
 
     <h1>Welcome, {{ user['first_name']|capitalize }}!</h1>
+    <!-- <hr>
+    <h2>Upload E-scripts</h2> -->
+    <hr>
+    <h2>Your Orders</h2>
 
-    <!-- allow users to upload escripts -->
-    <!-- view orders -->
+    {% if orders %}
+        {% for entry in orders %}
+            <div class="order">
+                <h3>Time of Order {{ entry.order.order_date | datetimeformat}}</h3>
+                <p>Pickup Location: {{ entry.order.pickup_location }}</p>
+                <p>Total: ${{ entry.order.total_amount }}</p>
+
+                <ul>
+                {% for item in entry['items'] %}
+                    <li>{{ item['product'] }} - Quantity: {{ item['quantity'] }} - Price: ${{ item['price'] }}</li>
+                {% endfor %}
+
+                </ul>
+                <hr>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>You have no orders yet.</p>
+    {% endif %}
+
+
     <!-- update personal information, for easy filling out when adding to order -->
 
             <footer class="site-footer">

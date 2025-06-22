@@ -234,6 +234,11 @@ h1 {
     margin-bottom: 30px;
 }
 
+h2 {
+    text-align: left;
+    margin-left: 20px;
+    margin-bottom: 30px;
+}
 ul {
     list-style-type: none;
     padding: 0;
@@ -424,7 +429,11 @@ p {
 }
 
 .checkout-form {
-    margin: 30px 0;
+    margin: 30px auto;
+    padding: 20px;
+    max-width: 600px;
+    background-color: #f8f8f8;
+    border-radius: 10px;
 }
 
 .checkout-form .form-group {
@@ -456,7 +465,7 @@ p {
 
   .search-bar {
     flex: 1 1 100%;
-    max-width: 100%;
+    max-width: 500px;
     margin: 10px 0;
     padding: 0 10px;
     justify-content: center;
@@ -488,4 +497,64 @@ p {
     font-size: 14px;
     white-space: nowrap;
   }
+}
+
+.order {
+    background-color: #fff8f0;
+    border: 1px solid #FFA500;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 700px;
+    box-shadow: 0 2px 8px rgba(255, 165, 0, 0.3);
+}
+
+.order h3 {
+    color: #FFA500;
+    margin-bottom: 10px;
+}
+
+.order p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+
+.order ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+.order ul li {
+    font-size: 15px;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+
+.order hr {
+    margin-top: 20px;
+    border: none;
+    border-top: 1px solid #FFA500;
+}
+
+@media (max-width: 768px) {
+    .order {
+        margin: 15px 10px;
+        padding: 15px;
+        max-width: 95%;
+    }
+}
+
+.order {
+    background-color: #fff8f0;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.order h3 {
+    margin-top: 0;
 }
