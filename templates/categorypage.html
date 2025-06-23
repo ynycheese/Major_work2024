@@ -7,7 +7,7 @@
     <title>Chemist Connect Online Store</title>
 </head>
 <body>
-    <header>
+<header>
         <a href="{{ url_for('homepage' )}}">
         <img src="{{ url_for('static', filename='images/logo_landscape.png')}}" alt="Logo" class="corner-image">
         </a>
@@ -19,22 +19,49 @@
         </div>
         <div class="header-icons">
             <a href="{{ url_for('view_cart')}}"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
-            <a href="{{ url_for('login')}}"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
+            <div class="dropdown">
+                <img src="{{ url_for('static', filename='images/profile.png')}}" alt="Profile" class="icon dropdown-toggle" onclick="toggleDropdown()"/>
+                <div id="dropdownMenu" class="dropdown-menu">
+                    {% if session.get('user_id')%}
+                        <a href="{{ url_for('profile')}}">View Profile</a>
+                        <a href="{{ url_for('logout')}}">Log out</a>
+                    {% else %}
+                        <a href="{{ url_for('login')}}">Log in</a>
+                        <a href="{{ url_for('signup')}}">Sign up</a>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
     </header>
 
     <nav class="category-nav">
         <a href="#">Incontinence</a>
-        <a href="#">Baby Care</a>
+        <a href="{{ url_for('categorypage', category_name='Baby Products')}}">Baby Care</a>
         <a href="#">Beauty</a>
         <a href="#">Medicine</a>
         <a href="#">Supplements</a>
         <a href="#">Skincare</a>
         <a href="#">Our services</a>
     </nav>
+<script>
+    function toggleDropdown() {
+  var menu = document.getElementById("dropdownMenu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.dropdown-toggle')) {
+    var dropdowns = document.getElementsByClassName("dropdown-menu");
+    for (var i = 0; i < dropdowns.length; i++) {
+      dropdowns[i].style.display = "none";
+    }
+  }
+}
+</script>
 
     <h1>{{ category }}</h1>
-
+    <!-- add a sorting system here. -->
     {% if empty %}
         <p>No products found in this category</p>
     {% else %}

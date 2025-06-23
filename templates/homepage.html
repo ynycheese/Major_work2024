@@ -93,12 +93,11 @@
             showSlide(nextSlide);
         }, 5000);
 
-        function toggleDropdown() {
+function toggleDropdown() {
   var menu = document.getElementById("dropdownMenu");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
 }
 
-// Close the dropdown if clicked outside
 window.onclick = function(event) {
   if (!event.target.matches('.dropdown-toggle')) {
     var dropdowns = document.getElementsByClassName("dropdown-menu");

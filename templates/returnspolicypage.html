@@ -19,19 +19,48 @@
         </div>
         <div class="header-icons">
             <a href="{{ url_for('view_cart')}}"><img src="{{ url_for('static',filename='images/cart.png')}}" alt="Cart" class="icon"></a>
-            <a href="{{ url_for('login')}}"><img src="{{ url_for('static',filename='images/profile.png')}}" alt="Profile" class="icon"></a>
+            <div class="dropdown">
+                <img src="{{ url_for('static', filename='images/profile.png')}}" alt="Profile" class="icon dropdown-toggle" onclick="toggleDropdown()"/>
+                <div id="dropdownMenu" class="dropdown-menu">
+                    {% if session.get('user_id')%}
+                        <a href="{{ url_for('profile')}}">View Profile</a>
+                        <a href="{{ url_for('logout')}}">Log out</a>
+                    {% else %}
+                        <a href="{{ url_for('login')}}">Log in</a>
+                        <a href="{{ url_for('signup')}}">Sign up</a>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
     </header>
 
     <nav class="category-nav">
         <a href="#">Incontinence</a>
-        <a href="#">Baby Care</a>
+        <a href="{{ url_for('categorypage', category_name='Baby Products')}}">Baby Care</a>
         <a href="#">Beauty</a>
         <a href="#">Medicine</a>
         <a href="#">Supplements</a>
         <a href="#">Skincare</a>
         <a href="#">Our services</a>
     </nav>
+
+    <script>
+    function toggleDropdown() {
+  var menu = document.getElementById("dropdownMenu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+window.onclick = function(event) {
+  if (!event.target.matches('.dropdown-toggle')) {
+    var dropdowns = document.getElementsByClassName("dropdown-menu");
+    for (var i = 0; i < dropdowns.length; i++) {
+      dropdowns[i].style.display = "none";
+    }
+  }
+}
+</script>
+
 
     <h1>Returns and Refunds Policy</h1>
     <p>We do not offer any returns unless the product is faulty or expired. Instead, we offer exchanges for any over the counter items within our store. Prescriptions are non-refundable.</p>
