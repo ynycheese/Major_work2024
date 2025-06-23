@@ -17,6 +17,14 @@ def get_db_connection():
     connection.row_factory = sqlite3.Row
     return connection
 
+def require_admin_access(min_level=3):
+    if 'admin_id' not in session:
+        return False
+    conn = get_db_connection()
+    admin = conn.execute('SELECT * FROM admin_database WHERE id = ?', (session['admin_id'],)).fetchone()
+    conn.close()
+    return admin and admin['access'] <= min_level
+
 @app.route('/')
 def homepage():
     connection = get_db_connection()
@@ -288,25 +296,21 @@ def get_cart():
 
 @app.route('/admin/orders')
 def view_all_orders():
-    if 'admin_id' not in session:
+    if not require_admin_access(3):
         return redirect(url_for('adminlogin'))
 
     sort_order = request.args.get('sort', 'desc').lower()
     if sort_order not in ['asc', 'desc']:
         sort_order = 'desc'
-    pickup_filters = request.args.getlist('pickup') 
-    
-    connection = get_db_connection()
+    pickup_filters = request.args.getlist('pickup')
 
-    all_pickups = [row['pickup_location'] for row in connection.execute('SELECT DISTINCT pickup_location FROM orders').fetchall()]
-
-
+    conn = get_db_connection()
+    all_pickups = [row['pickup_location'] for row in conn.execute('SELECT DISTINCT pickup_location FROM orders').fetchall()]
     if not pickup_filters:
         pickup_filters = all_pickups
-
     placeholders = ','.join('?' for _ in pickup_filters)
-
-    orders = connection.execute(f'''
+    
+    orders = conn.execute(f'''
         SELECT o.*, u.first_name, u.last_name, u.email
         FROM orders o
         LEFT JOIN users_database u ON o.user_id = u.id
@@ -316,69 +320,67 @@ def view_all_orders():
 
     orders_with_items = []
     for order in orders:
-        items = connection.execute('''
+        items = conn.execute('''
             SELECT oi.quantity, oi.price, p.product
             FROM order_items oi
             JOIN product_database p ON oi.product_id = p.id
             WHERE oi.order_id = ?
         ''', (order['id'],)).fetchall()
+        orders_with_items.append({'order': order, 'items': items})
 
-        orders_with_items.append({
-            'order': order,
-            'items': items
-        })
-
-    connection.close()
-
-    return render_template(
-        'adminorders.html', 
-        all_orders=orders_with_items, 
-        current_sort=sort_order, 
-        all_pickups=all_pickups,
-        pickup_filters=pickup_filters
-    )
+    conn.close()
+    return render_template('adminorders.html', all_orders=orders_with_items, current_sort=sort_order, all_pickups=all_pickups, pickup_filters=pickup_filters)
 
 @app.route('/admin/products')
 def admin_products():
-    if 'admin_id' not in session:
-        return redirect(url_for('adminlogin'))
-    
-    connection = get_db_connection()
-    products = connection.execute('SELECT * FROM product_database').fetchall()
-    connection.close()
-    
+    if not require_admin_access(2):
+        return "Unauthorized", 403
+    conn = get_db_connection()
+    products = conn.execute('SELECT * FROM product_database').fetchall()
+    conn.close()
     return render_template('adminproducts.html', products=products)
 
 @app.route('/admin/products/edit/<int:product_id>', methods=['GET', 'POST'])
 def edit_product(product_id):
-    if 'admin_id' not in session:
-        return redirect(url_for('adminlogin'))
-
-    connection = get_db_connection()
-
+    if not require_admin_access(2):
+        return "Unauthorized", 403
+    conn = get_db_connection()
     if request.method == 'POST':
         product = request.form['product']
         price = float(request.form['price'])
         category = request.form['category']
         stock = int(request.form['stock'])
-
-        connection.execute('''
-            UPDATE product_database
-            SET product = ?, price = ?, category = ?, stock = ?
-            WHERE id = ?
-        ''', (product, price, category, stock, product_id))
-        connection.commit()
-        connection.close()
+        conn.execute('UPDATE product_database SET product = ?, price = ?, category = ?, stock = ? WHERE id = ?', (product, price, category, stock, product_id))
+        conn.commit()
+        conn.close()
         return redirect(url_for('admin_products'))
-
-    product = connection.execute('SELECT * FROM product_database WHERE id = ?', (product_id,)).fetchone()
-    connection.close()
-
-    if product is None:
+    product = conn.execute('SELECT * FROM product_database WHERE id = ?', (product_id,)).fetchone()
+    conn.close()
+    if not product:
         return "Product not found", 404
-
     return render_template('editproduct.html', product=product)
 
+@app.route('/admin/add_admin', methods=['GET', 'POST'])
+def add_admin():
+    if not require_admin_access(1):
+        return "Unauthorized", 403
+
+    conn = get_db_connection()
+    error = success = None
+
+    if request.method == 'POST':
+        employee_name = request.form['employee_name']
+        password = request.form['password']
+        access_level = int(request.form['access'])
+        hashed_password = generate_password_hash(password)
+        try:
+            conn.execute('INSERT INTO admin_database (employee_name, password, access) VALUES (?, ?, ?)', (employee_name, hashed_password, access_level))
+            conn.commit()
+            success = "New admin added."
+        except sqlite3.IntegrityError:
+            error = "Admin already exists."
+    conn.close()
+    return render_template('addadmin.html', error=error, success=success)
 
 if __name__ == '__main__':
     app.run(debug=True)
