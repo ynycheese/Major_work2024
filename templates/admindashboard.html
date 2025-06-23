@@ -7,10 +7,7 @@
     <title>Admin Dashboard</title>
 </head>
 <body>
-    {% if not session.get('admin_id') %}
-        <script>window.location.href = "{{ url_for('adminlogin') }}";</script>
-    {% endif %}
-
+    <h1>Admin {{ username }}</h1>
     <div class="topbar">
         <div class="title">Master Admin</div>
     </div>
@@ -20,9 +17,7 @@
         <a href="{{ url_for('view_all_orders') }}">View Orders</a>
         <a href="{{ url_for('admin_products') }}">Manage Products</a>
         <a href="{{ url_for('add_admin') }}">Team Management</a>
-        <a href="#">Analytics</a>
         <a href="{{ url_for('adminlogout') }}">Log Out</a>
     </div>
-
 </body>
 </html>

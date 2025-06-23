@@ -53,13 +53,21 @@
             <div class="product-details">
                 <h2>{{ product.product }}</h2>
                 <p class="price">${{ "%.2f" | format(product.price) }}</p>
-                <p>Availability: {{ product.availability or "In stock" }}</p>
-                
-                <label for="quantity">Quantity:</label>
-                <div class="quantity-control">    
-                    <input type="number" id="quantity" value="1" min="1">
-                </div>
-                <button onclick="addToCart('{{ product.id | tojson }}')">Add to Cart 🛒</button>
+                {% if product.stock > 0 %}
+                    <p>Availability: In stock ({{ product.stock }} available)</p>
+
+                    <label for="quantity">Quantity:</label>
+                    <div class="quantity-control">    
+                        <input type="number" id="quantity" value="1" min="1" max="{{ product.stock }}">
+                    </div>
+                    <button onclick="addToCart('{{ product.id | tojson }}')">Add to Cart 🛒</button>
+                {% else %}
+                    <p class="out-of-stock">Availability: Out of stock</p>
+                    <div class="quantity-control">    
+                        <input type="number" id="quantity" value="0" min="0" disabled>
+                    </div>
+                    <button disabled style="opacity: 0.6; cursor: not-allowed;">Out of Stock</button>
+                {% endif %}
             </div>
         </div>
 

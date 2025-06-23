@@ -1,9 +1,10 @@
-from flask import Flask, render_template, redirect, url_for, session, request, make_response, send_from_directory, jsonify
+from flask import Flask, render_template, redirect, url_for, session, request, make_response, send_from_directory, jsonify, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import sqlite3
 import os
 from datetime import datetime, timedelta
+import re
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'default_key')
@@ -94,10 +95,20 @@ def view_cart():
     
     subtotal = round(sum(item['price'] * item['quantity'] for item in product_list), 2)
     discount = 0
-    total = subtotal - discount
+    user_points = 0
+
+    if 'user_id' in session:
+        user = connection.execute('SELECT points FROM users_database WHERE id = ?', (session['user_id'],)).fetchone()
+        if user:
+            user_points = user['points']
+            if user_points >= 200:
+                discount = 10
+
+    total = max(subtotal - discount, 0)
 
     connection.close()
-    return render_template('cartpage.html', cart=product_list, subtotal=subtotal, discount=discount, total=total)
+    return render_template('cartpage.html', cart=product_list, subtotal=subtotal, discount=discount, total=total, user_points=user_points)
+
 
 @app.route('/search')
 def search():
@@ -142,10 +153,16 @@ def signup():
         confirmed_password = request.form['confirmed_password']
         password = request.form['password']
 
+        # Validate password pattern server-side
+        if not re.match(r'^(?=.*[A-Z])(?=.*\d).{8,}$', password):
+            error = 'Password must be at least 8 characters long, contain at least one uppercase letter and one number.'
+            return render_template('signuppage.html', error=error)
+
         if password != confirmed_password:
             error = 'Passwords do not match.'
             return render_template('signuppage.html', error=error)
 
+        # Continue with your existing user existence check and user creation...
         hashed_password = generate_password_hash(password)
         connection = get_db_connection()
 
@@ -279,21 +296,30 @@ def profile():
 
     return render_template('profilepage.html', user=user, orders=orders_with_items)
 
-
 @app.route('/checkout', methods=['POST'])
 def checkout():
     user_id = session.get('user_id')
     guest_name = request.form.get('guest_name') if not user_id else None
     guest_email = request.form.get('guest_email') if not user_id else None
-
     pickup_location = request.form['pickup_location']
     cart = get_cart()
-    total_amount = sum(item['price'] * item['quantity'] for item in cart)
+    subtotal = sum(item['price'] * item['quantity'] for item in cart)
+
+    discount = 0
+    if user_id:
+        conn = sqlite3.connect('website_database.db')
+        conn.row_factory = sqlite3.Row 
+        user = conn.execute('SELECT points FROM users_database WHERE id = ?', (user_id,)).fetchone()
+
+        if user and user['points'] >= 200:
+            discount = 10
+        conn.close()
+
+    total_amount = max(subtotal - discount, 0)
 
     conn = sqlite3.connect('website_database.db')
     cursor = conn.cursor()
 
-    # Insert the order
     cursor.execute("""
         INSERT INTO orders (user_id, guest_name, guest_email, order_date, total_amount, pickup_location)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -301,21 +327,32 @@ def checkout():
 
     order_id = cursor.lastrowid
 
-    # Insert each order item
     for item in cart:
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price)
             VALUES (?, ?, ?, ?)
         """, (order_id, item['product_id'], item['quantity'], item['price']))
 
-    # Update points if user is logged in
+        cursor.execute("""
+            UPDATE product_database
+            SET stock = stock - ?
+            WHERE id = ? AND stock >= ?
+        """, (item['quantity'], item['product_id'], item['quantity']))
+
     if user_id:
         points_earned = int(total_amount)
-        cursor.execute("""
-            UPDATE users_database
-            SET points = COALESCE(points, 0) + ?
-            WHERE id = ?
-        """, (points_earned, user_id))
+        if discount == 10:
+            cursor.execute("""
+                UPDATE users_database
+                SET points = points - 200 + ?
+                WHERE id = ?
+            """, (points_earned, user_id))
+        else:
+            cursor.execute("""
+                UPDATE users_database
+                SET points = points + ?
+                WHERE id = ?
+            """, (points_earned, user_id))
 
     conn.commit()
     conn.close()
@@ -323,6 +360,7 @@ def checkout():
     resp = make_response("Order placed successfully!")
     resp.set_cookie('cart', '', max_age=0)
     return resp
+
 
 def get_cart():
     cart_cookie = request.cookies.get('cart')
@@ -382,7 +420,8 @@ def view_all_orders():
 @app.route('/admin/products')
 def admin_products():
     if not require_admin_access(2):
-        return "Unauthorized", 403
+        flash("This feature is not available for your level of security.")
+        return redirect(url_for('admindashboard'))  
     conn = get_db_connection()
     products = conn.execute('SELECT * FROM product_database').fetchall()
     conn.close()
@@ -391,7 +430,8 @@ def admin_products():
 @app.route('/admin/products/edit/<int:product_id>', methods=['GET', 'POST'])
 def edit_product(product_id):
     if not require_admin_access(2):
-        return "Unauthorized", 403
+        flash("This feature is not available for your level of security.")
+        return redirect(url_for('admindashboard'))  
     conn = get_db_connection()
     if request.method == 'POST':
         product = request.form['product']
@@ -411,7 +451,8 @@ def edit_product(product_id):
 @app.route('/admin/add_admin', methods=['GET', 'POST'])
 def add_admin():
     if not require_admin_access(1):
-        return "Unauthorized", 403
+        flash("This feature is not available for your level of security.")
+        return redirect(url_for('admindashboard'))  
 
     conn = get_db_connection()
     error = success = None
