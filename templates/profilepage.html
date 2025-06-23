@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="../static/stylesheet.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chemist Connect Online Store</title>
@@ -34,11 +34,11 @@
     </nav>
 
     <h1>Welcome, {{ user['first_name']|capitalize }}!</h1>
-    <!-- <hr>
-    <h2>Upload E-scripts</h2> -->
     <hr>
+    <p class="user-points">Your Points: {{ user['points'] or 0 }}</p>
     <h2>Your Orders</h2>
 
+    <div class="order-container">
     {% if orders %}
         {% for entry in orders %}
             <div class="order">
@@ -58,9 +58,7 @@
     {% else %}
         <p>You have no orders yet.</p>
     {% endif %}
-
-
-    <!-- update personal information, for easy filling out when adding to order -->
+    </div>
 
             <footer class="site-footer">
         <div class="footer-links">

@@ -7,33 +7,22 @@
     <title>Admin Dashboard</title>
 </head>
 <body>
+    {% if not session.get('admin_id') %}
+        <script>window.location.href = "{{ url_for('adminlogin') }}";</script>
+    {% endif %}
+
     <div class="topbar">
         <div class="title">Master Admin</div>
-        </div>
     </div>
 
     <div class="sidebar">
         <a href="#">Dashboard</a>
-        <a href="{{ url_for('view_all_orders')}}">View Orders</a>
+        <a href="{{ url_for('view_all_orders') }}">View Orders</a>
         <a href="{{ url_for('admin_products') }}">Manage Products</a>
-        <a href="{{ url_for('add_admin')}}">Team Management</a>
+        <a href="{{ url_for('add_admin') }}">Team Management</a>
         <a href="#">Analytics</a>
-        <a href="#">Log Out</a>
+        <a href="{{ url_for('adminlogout') }}">Log Out</a>
     </div>
-
-{% if session.get('admin_id') %}
-<script>
-    if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
-        fetch('/adminlogout', { method: 'POST' }).then(() => {
-            location.href = "/adminlogin"; 
-        });
-    }
-    window.addEventListener('unload', function () {
-        navigator.sendBeacon('/adminlogout');
-    });
-</script>
-{% endif %}
-
 
 </body>
 </html>

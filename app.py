@@ -4,6 +4,7 @@ import json
 import sqlite3
 import os
 from datetime import datetime, timedelta
+from flask import make_response
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'default_key')
@@ -24,6 +25,22 @@ def require_admin_access(min_level=3):
     admin = conn.execute('SELECT * FROM admin_database WHERE id = ?', (session['admin_id'],)).fetchone()
     conn.close()
     return admin and admin['access'] <= min_level
+
+def nocache(view):
+    def no_cache_wrapper(*args, **kwargs):
+        response = make_response(view(*args, **kwargs))
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
+    no_cache_wrapper.__name__ = view.__name__
+    return no_cache_wrapper
+
+@app.after_request
+def add_header(response):
+    if 'admin_id' not in session:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
 
 @app.route('/')
 def homepage():
@@ -188,6 +205,7 @@ def adminlogin():
     return render_template('adminlogin.html', error=error)
 
 @app.route('/admin')
+@nocache
 def admindashboard():
     if 'admin_id' not in session:
         return redirect(url_for('adminlogin'))
@@ -196,9 +214,13 @@ def admindashboard():
 
 @app.route('/adminlogout', methods=['GET', 'POST'])
 def adminlogout():
-    session.pop('admin_id', None)
-    session.pop('employee_name', None)
-    return '', 204
+    session.clear()
+    resp = make_response(redirect(url_for('homepage')))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
+
 
 @app.route('/category/<category_name>')
 def categorypage(category_name):
@@ -256,6 +278,7 @@ def checkout():
     conn = sqlite3.connect('website_database.db')
     cursor = conn.cursor()
 
+    # Insert the order
     cursor.execute("""
         INSERT INTO orders (user_id, guest_name, guest_email, order_date, total_amount, pickup_location)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -263,11 +286,21 @@ def checkout():
 
     order_id = cursor.lastrowid
 
+    # Insert each order item
     for item in cart:
         cursor.execute("""
             INSERT INTO order_items (order_id, product_id, quantity, price)
             VALUES (?, ?, ?, ?)
         """, (order_id, item['product_id'], item['quantity'], item['price']))
+
+    # Update points if user is logged in
+    if user_id:
+        points_earned = int(total_amount)
+        cursor.execute("""
+            UPDATE users_database
+            SET points = COALESCE(points, 0) + ?
+            WHERE id = ?
+        """, (points_earned, user_id))
 
     conn.commit()
     conn.close()
@@ -381,6 +414,9 @@ def add_admin():
             error = "Admin already exists."
     conn.close()
     return render_template('addadmin.html', error=error, success=success)
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
