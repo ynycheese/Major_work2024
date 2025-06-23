@@ -4,7 +4,6 @@ import json
 import sqlite3
 import os
 from datetime import datetime, timedelta
-from flask import make_response
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'default_key')
@@ -224,13 +223,29 @@ def adminlogout():
 
 @app.route('/category/<category_name>')
 def categorypage(category_name):
-    connection = get_db_connection()
-    products = connection.execute('SELECT * FROM product_database WHERE category = ?', (category_name,)).fetchall()
-    connection.close()
+    sort = request.args.get('sort')
 
-    if not products:
-        return render_template('categorypage.html', category=category_name, products=[], empty=True)
-    return render_template('categorypage.html', category=category_name, products=products, empty=False)
+    query = "SELECT * FROM product_database WHERE category = ?"
+    params = [category_name]
+
+    if sort == 'price_asc':
+        query += " ORDER BY price ASC"
+    elif sort == 'price_desc':
+        query += " ORDER BY price DESC"
+
+    conn = sqlite3.connect('website_database.db')
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cur.execute(query, params)
+    products = cur.fetchall()
+    conn.close()
+
+    empty = len(products) == 0
+
+    return render_template('categorypage.html',
+                           category=category_name,
+                           products=products,
+                           empty=empty)
 
 @app.route('/profile')
 def profile():
@@ -414,8 +429,6 @@ def add_admin():
             error = "Admin already exists."
     conn.close()
     return render_template('addadmin.html', error=error, success=success)
-
-
 
 
 if __name__ == '__main__':

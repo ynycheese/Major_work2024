@@ -61,7 +61,15 @@ window.onclick = function(event) {
 </script>
 
     <h1>{{ category }}</h1>
-    <!-- add a sorting system here. -->
+    <form method="GET" action="{{ url_for('categorypage', category_name=category) }}" class="sort-form">
+        <label for="sort" style="margin-left: 25px;">Sort by price:</label>
+        <select name="sort" id="sort" onchange="this.form.submit()">
+            <option value="" {% if not request.args.get('sort') %}selected{% endif %}>Default</option>
+            <option value="price_asc" {% if request.args.get('sort') == 'price_asc' %}selected{% endif %}>Low to High</option>
+            <option value="price_desc" {% if request.args.get('sort') == 'price_desc' %}selected{% endif %}>High to Low</option>
+        </select>
+    </form>
+
     {% if empty %}
         <p>No products found in this category</p>
     {% else %}

@@ -661,3 +661,38 @@ p {
     margin: 0 auto;
     padding: 0 20px;
 }
+
+.sort-form {
+  margin: 1rem 0 2rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: Arial, sans-serif;
+}
+
+.sort-form label {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+.sort-form select {
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.sort-form select:hover,
+.sort-form select:focus {
+  border-color: #007BFF;
+  outline: none;
+}
+@media (min-width: 600px) {
+  .sort-form {
+    max-width: 250px;
+  }
+}
