@@ -66,16 +66,32 @@ CREATE TABLE IF NOT EXISTS order_items (
 )
 """)
 
-cursor.execute("DELETE FROM product_database")
 conn.commit()
 
 df = pd.read_csv(csv_file)
 
-
 expected_cols = {'category', 'product', 'price', 'image', 'stock'}
 if expected_cols.issubset(df.columns):
-    df.to_sql('product_database', conn, if_exists='append', index=False)
-    print('Database updated')
+    for _, row in df.iterrows():
+        # Check if product with same name and category already exists
+        cursor.execute("""
+            SELECT 1 FROM product_database
+            WHERE product = ? AND category = ?
+        """, (row['product'], row['category']))
+        
+        exists = cursor.fetchone()
+        if not exists:
+            cursor.execute("""
+                INSERT INTO product_database (category, product, price, image, stock)
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                row['category'],
+                row['product'],
+                row['price'],
+                row['image'],
+                row['stock']
+            ))
+    print("New products inserted.")
 else:
     print("CSV columns do not match table structure.")
 

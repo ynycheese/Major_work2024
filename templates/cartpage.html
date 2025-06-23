@@ -35,14 +35,13 @@
         </div>
     </header>
 
-    <nav class="category-nav">
-        <a href="#">Incontinence</a>
+<nav class="category-nav">
+        <a href="{{ url_for('categorypage', category_name='Incontinence')}}">Incontinence</a>
         <a href="{{ url_for('categorypage', category_name='Baby Products')}}">Baby Care</a>
-        <a href="#">Beauty</a>
-        <a href="#">Medicine</a>
-        <a href="#">Supplements</a>
-        <a href="#">Skincare</a>
-        <a href="#">Our services</a>
+        <a href="{{ url_for('categorypage', category_name='Beauty')}}">Beauty</a>
+        <a href="{{ url_for('categorypage', category_name='Medicine')}}">Medicine</a>
+        <a href="{{ url_for('categorypage', category_name='Supplements')}}">Supplements</a>
+        <a href="{{ url_for('categorypage', category_name='Skincare')}}">Skincare</a>
     </nav>
 
     <script>
@@ -78,11 +77,18 @@ window.onclick = function(event) {
         {% if discount > 0 %}
             <p>Discount: -${{ discount }}</p>
         {% endif %}
-        <h3>Total: ${{ total }}</h3>
-        {% if user_points >= 200 %}
-            <p style="color: green;">🎉 You have {{ user_points }} points – a $10 discount has been applied!</p>
+        <p>Total: ${{ total }}</p>
+
+        {% if session.get('user_id') %}
+            <p>You have {{ user_points }} points. 
+                {% if user_points >= 200 %}
+                    You've earned a $10 discount!
+                {% else %}
+                    Earn 200 points to get $10 off your next order.
+                {% endif %}
+            </p>
         {% else %}
-            <p>You have {{ user_points }} points. Earn 200 points to get $10 off your next order.</p>
+            <p>Sign up and collect points on every purchase!</p>
         {% endif %}
 
     </div>
