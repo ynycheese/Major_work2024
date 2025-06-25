@@ -4,37 +4,72 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - All Orders</title>
+    <title>All Orders</title>
 </head>
 <body>
+
     <div class="topbar">
-        <div class="title">Admin Dashboard - All Orders</div>
-        <a href="{{ url_for('admindashboard') }}" style="color: white; text-decoration: underline;">Back</a>
+        <div class="title">Chemist Connect Admin - All Orders</div>
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for('admindashboard') }}">Dashboard</a>
+        <a href="{{ url_for('view_all_orders') }}">View Orders</a>
+        <a href="{{ url_for('admin_products') }}">Manage Products</a>
+        <a href="{{ url_for('add_admin') }}">Team Management</a>
+        <a href="{{ url_for('adminlogout') }}">Log Out</a>
+    </div>
+    <div class="order-container" style="margin-left: 220px; padding-top: 80px;">
+
+        <h1>All Orders</h1>
+        <form method="GET" id="filterForm">
+            <label for="sortSelect">Sort by date:</label>
+            <select name="sort" id="sortSelect" onchange="document.getElementById('filterForm').submit()">
+                <option value="desc" {% if current_sort == 'desc' %}selected{% endif %}>Newest First</option>
+                <option value="asc" {% if current_sort == 'asc' %}selected{% endif %}>Oldest First</option>
+            </select>
+
+            <div class="dropdown" style="display: inline-block; position: relative; margin-left: 20px;">
+                <button type="button" onclick="toggleDropdown()" class="dropbtn">Filter by Pickup Location ▼</button>
+                <div id="dropdownContent" class="dropdown-content" style="display:none; position: absolute; background: white; border: 1px solid #ccc; padding: 10px; max-height: 200px; overflow-y: auto; z-index: 100;">
+                    {% for location in all_pickups %}
+                        <label>
+                            <input type="checkbox" name="pickup" value="{{ location }}" 
+                                {% if location in pickup_filters %}checked{% endif %} onchange="document.getElementById('filterForm').submit()">
+                            {{ location }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+            </div>
+        </form>
+
+        <!-- Orders Display -->
+        {% for entry in all_orders %}
+            <div class="order">
+                <h3>Order #{{ entry['order']['id'] }} - {{ entry['order']['order_date']|datetimeformat }}</h3>
+                <p>User ID: {{ entry['order']['user_id'] or 'Guest' }}</p>
+                {% if entry['order']['user_id'] %}
+                    <p>Name: {{ entry['order']['first_name']|capitalize }} {{ entry['order']['last_name']|capitalize }}</p>
+                    <p>Email: {{ entry['order']['email'] }}</p>
+                {% else %}
+                    <p>Name: {{ entry['order']['guest_name'] or 'Guest' }}</p>
+                    <p>Email: {{ entry['order']['guest_email'] or 'Guest' }}</p>
+                {% endif %}
+                <p>Pickup Location: {{ entry['order']['pickup_location'] }}</p>
+                <p>Total: ${{ entry['order']['total_amount'] }}</p>
+
+                <ul>
+                    {% for item in entry['items'] %}
+                        <li>{{ item['product'] }} – Quantity: {{ item['quantity'] }} – Price: ${{ item['price'] }}</li>
+                    {% endfor %}
+                </ul>
+                <hr>
+            </div>
+        {% else %}
+            <p>No orders found.</p>
+        {% endfor %}
     </div>
 
-        <div class="container" style="margin-top: 70px;">
-            <h1>All Orders</h1>
-    <form method="GET" id="filterForm">
-        <label for="sortSelect">Sort by date:</label>
-        <select name="sort" id="sortSelect" onchange="document.getElementById('filterForm').submit()">
-            <option value="desc" {% if current_sort == 'desc' %}selected{% endif %}>Newest First</option>
-            <option value="asc" {% if current_sort == 'asc' %}selected{% endif %}>Oldest First</option>
-        </select>
-
-        <div class="dropdown" style="display: inline-block; position: relative; margin-left: 20px;">
-            <button type="button" onclick="toggleDropdown()" class="dropbtn">Filter by Pickup Location ▼</button>
-            <div id="dropdownContent" class="dropdown-content" style="display:none; position: absolute; background: white; border: 1px solid #ccc; padding: 10px; max-height: 200px; overflow-y: auto; z-index: 100;">
-                {% for location in all_pickups %}
-                    <label>
-                        <input type="checkbox" name="pickup" value="{{ location }}" 
-                            {% if location in pickup_filters %}checked{% endif %} onchange="document.getElementById('filterForm').submit()">
-                        {{ location }}
-                    </label><br>
-                {% endfor %}
-            </div>
-        </div>
-    </form>
-
+    <!-- Dropdown Script -->
     <script>
     function toggleDropdown() {
         var content = document.getElementById("dropdownContent");
@@ -58,33 +93,5 @@
     }
     </script>
 
-
-
-    {% for entry in all_orders %}
-    <div class="order">
-        <h3>Order #{{ entry['order']['id'] }} - {{ entry['order']['order_date']|datetimeformat }}</h3>
-        <p>User ID: {{ entry['order']['user_id'] or 'Guest' }}</p>
-        {% if entry['order']['user_id'] %}
-            <p>Name: {{ entry['order']['first_name']|capitalize }} {{ entry['order']['last_name']|capitalize }}</p>
-            <p>Email: {{ entry['order']['email'] }}</p>
-        {% else %}
-            <p>Name: {{ entry['order']['guest_name'] or 'Guest' }}</p>
-            <p>Email: {{ entry['order']['guest_email'] or 'Guest' }}</p>
-        {% endif %}
-        <p>Pickup Location: {{ entry['order']['pickup_location'] }}</p>
-        <p>Total: ${{ entry['order']['total_amount'] }}</p>
-
-        <ul>
-            {% for item in entry['items'] %}
-                <li>{{ item['product'] }} – Quantity: {{ item['quantity'] }} – Price: ${{ item['price'] }}</li>
-            {% endfor %}
-        </ul>
-        <hr>
-    </div>
-    {% else %}
-        <p>No orders found.</p>
-    {% endfor %}
-
-    </div>
 </body>
 </html>

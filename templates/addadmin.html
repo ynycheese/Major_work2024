@@ -1,44 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Add Admin</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body>
-<a href="{{ url_for('admindashboard') }}" class="back-button">Back to Dashboard</a>
-<div class="form-section">
-    <h2 class="form-title">Add New Admin</h2>
-    <form method="POST" class="form-body">
-        <div class="form-field">
-            <label for="employee_name">Employee Name</label>
-            <input type="text" name="employee_name" required>
+    <div class="topbar">
+        <div class="title">Chemist Connect Admin - Add Admin</div>
+    </div>
+    <div class="sidebar">
+        <a href="{{ url_for('admindashboard') }}">Dashboard</a>
+        <a href="{{ url_for('view_all_orders') }}">View Orders</a>
+        <a href="{{ url_for('admin_products') }}">Manage Products</a>
+        <a href="{{ url_for('add_admin') }}">Team Management</a>
+        <a href="{{ url_for('adminlogout') }}">Log Out</a>
+    </div>
+    <div class="order-container" style="margin-left: 220px; padding-top: 80px; max-width: 500px;">
+        <div class="form-section">
+            <h2 class="form-title">Add New Admin</h2>
+            <form method="POST" class="form-body">
+                <div class="form-field">
+                    <label for="employee_name">Employee Name</label>
+                    <input type="text" name="employee_name" required />
+                </div>
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" required />
+                </div>
+                <div class="form-field">
+                    <label for="access">Access Level</label>
+                    <select name="access" required>
+                        <option value="1">Level 1 (Full access)</option>
+                        <option value="2">Level 2 (Edit + View)</option>
+                        <option value="3">Level 3 (View only)</option>
+                    </select>
+                </div>
+                <button type="submit" class="form-button">Add Admin</button>
+            </form>
+            {% if success %}
+                <div class="form-success">{{ success }}</div>
+            {% elif error %}
+                <div class="form-error">{{ error }}</div>
+            {% endif %}
         </div>
-
-        <div class="form-field">
-            <label for="password">Password</label>
-            <input type="password" name="password" required>
-        </div>
-
-        <div class="form-field">
-            <label for="access">Access Level</label>
-            <select name="access" required>
-                <option value="1">Level 1 (Full access)</option>
-                <option value="2">Level 2 (Edit + View)</option>
-                <option value="3">Level 3 (View only)</option>
-            </select>
-        </div>
-
-        <button type="submit" class="form-button">Add Admin</button>
-    </form>
-
-    {% if success %}
-        <div class="form-success">{{ success }}</div>
-    {% elif error %}
-        <div class="form-error">{{ error }}</div>
-    {% endif %}
-</div>
-
+    </div>
 </body>
 </html>
