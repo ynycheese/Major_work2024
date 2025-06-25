@@ -200,6 +200,19 @@ def returns():
 def contactus():
     return render_template('contactuspage.html')
 
+@app.route('/aboutus')
+def aboutus():
+    return render_template('aboutus.html')
+
+@app.route('/locations')
+def locations():
+    return render_template('locations.html')
+
+@app.route('/helpsupport')
+def helpsupport():
+    return render_template('helpsupport.html')
+
+
 @app.route('/adminlogin', methods=['GET', 'POST'])
 def adminlogin():
     error = None
@@ -249,6 +262,10 @@ def categorypage(category_name):
         query += " ORDER BY price ASC"
     elif sort == 'price_desc':
         query += " ORDER BY price DESC"
+    elif sort == 'name_asc':
+        query += " ORDER BY product ASC"
+    elif sort == 'name_desc':
+        query += " ORDER BY product DESC"
 
     conn = sqlite3.connect('website_database.db')
     conn.row_factory = sqlite3.Row

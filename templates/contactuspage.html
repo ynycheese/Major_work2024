@@ -36,17 +36,16 @@
     </header>
 
     <nav class="category-nav">
-        <a href="#">Incontinence</a>
+        <a href="{{ url_for('categorypage', category_name='Incontinence')}}">Incontinence</a>
         <a href="{{ url_for('categorypage', category_name='Baby Products')}}">Baby Care</a>
-        <a href="#">Beauty</a>
-        <a href="#">Medicine</a>
-        <a href="#">Supplements</a>
-        <a href="#">Skincare</a>
-        <a href="#">Our services</a>
+        <a href="{{ url_for('categorypage', category_name='Beauty')}}">Beauty</a>
+        <a href="{{ url_for('categorypage', category_name='Medicine')}}">Medicine</a>
+        <a href="{{ url_for('categorypage', category_name='Supplements')}}">Supplements</a>
+        <a href="{{ url_for('categorypage', category_name='Skincare')}}">Skincare</a>
     </nav>
 
     <script>
-    function toggleDropdown() {
+function toggleDropdown() {
   var menu = document.getElementById("dropdownMenu");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
 }
@@ -59,20 +58,31 @@ window.onclick = function(event) {
     }
   }
 }
-</script>
 
-    <h1>Contact us</h1>
-    <p>Customer support call: 0234234234 </p>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchForm = document.querySelector('.search-bar form');
+    searchForm.addEventListener('submit', function (e) {
+        const input = searchForm.querySelector('input[name="query"]');
+        if (!input.value.trim()) {
+            e.preventDefault(); 
+        }
+    });
+});
+    </script>
 
-       <footer class="site-footer">
-    <nav class="category-nav">
-        <a href="{{ url_for('categorypage', category_name='Incontinence')}}">Incontinence</a>
-        <a href="{{ url_for('categorypage', category_name='Baby Products')}}">Baby Care</a>
-        <a href="{{ url_for('categorypage', category_name='Beauty')}}">Beauty</a>
-        <a href="{{ url_for('categorypage', category_name='Medicine')}}">Medicine</a>
-        <a href="{{ url_for('categorypage', category_name='Supplements')}}">Supplements</a>
-        <a href="{{ url_for('categorypage', category_name='Skincare')}}">Skincare</a>
-    </nav>
+    <h4>Contact Us</h4>
+    <p>Phone:0423 456 789</p>
+    <p>Email: chemistconnect@gmail.com</p>
+
+    <footer class="site-footer">
+        <div class="footer-links">
+            <a href="{{ url_for('returns')}}">Return Policies</a>
+            <a href="{{ url_for('aboutus')}}">About Us</a>
+            <a href="{{ url_for('locations')}}">Store Locations</a>
+            <a href="{{ url_for('helpsupport')}}">Help & Support</a>
+            <a href="{{ url_for('contactus')}}">Contact Us</a>
+            <a href="{{ url_for('adminlogin')}}">Admin Login</a>
+        </div>
         <p class="footer-text">© 2025 Chemist Connect. All rights reserved.</p>
     </footer>
 </body>

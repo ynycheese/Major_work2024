@@ -61,11 +61,13 @@ window.onclick = function(event) {
 
     <h1>{{ category }}</h1>
     <form method="GET" action="{{ url_for('categorypage', category_name=category) }}" class="sort-form">
-        <label for="sort" style="margin-left: 25px;">Sort by price:</label>
+        <label for="sort" style="margin-left: 25px;">Sort by:</label>
         <select name="sort" id="sort" onchange="this.form.submit()">
             <option value="" {% if not request.args.get('sort') %}selected{% endif %}>Default</option>
             <option value="price_asc" {% if request.args.get('sort') == 'price_asc' %}selected{% endif %}>Low to High</option>
             <option value="price_desc" {% if request.args.get('sort') == 'price_desc' %}selected{% endif %}>High to Low</option>
+            <option value="name_asc" {% if request.args.get('sort') == 'name_asc' %}selected{% endif %}>Name: A to Z</option>
+            <option value="name_desc" {% if request.args.get('sort') == 'name_desc' %}selected{% endif %}>Name: Z to A</option>
         </select>
     </form>
 
@@ -88,9 +90,9 @@ window.onclick = function(event) {
        <footer class="site-footer">
         <div class="footer-links">
             <a href="{{ url_for('returns')}}">Return Policies</a>
-            <a href="#">About Us</a>
-            <a href="#">Store Locations</a>
-            <a href="#">Help & Support</a>
+            <a href="{{ url_for('aboutus')}}">About Us</a>
+            <a href="{{ url_for('locations')}}">Store Locations</a>
+            <a href="{{ url_for('helpsupport')}}">Help & Support</a>
             <a href="{{ url_for('contactus')}}">Contact Us</a>
             <a href="{{ url_for('adminlogin')}}">Admin Login</a>
         </div>

@@ -44,7 +44,7 @@
         <a href="{{ url_for('categorypage', category_name='Skincare')}}">Skincare</a>
     </nav>
 
-<script>
+    <script>
     function toggleDropdown() {
   var menu = document.getElementById("dropdownMenu");
   menu.style.display = (menu.style.display === "block") ? "none" : "block";
@@ -61,28 +61,15 @@ window.onclick = function(event) {
 </script>
 
 
-    <div class="container">
-        <h1>Search Results for "{{ query }}"</h1>
-
-        {% if results %}
-            <div class="product-grid">
-                {% for product in results %}
-                <div class="product-card">
-                    <a href="{{ url_for('product_detail', product_id=product['id']) }}">
-                        <img src="{{ url_for('static', filename='images/product_images/' ~ product['image']) }}" alt="{{ product['product_name'] }}">
-                        <div class="product-name">{{ product['Product'] }}</div>
-                        <div class="product-price">${{ product['price'] }}</div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No products found matching your search.</p>
-        {% endif %}
-    </div>
-
-    <footer class="site-footer">
-        <div class="footer-links">
+    <h1>Store Locations</h1>
+    <h4>Prospect</h4>
+    <p><i>2/3 Aldgate St, Prospect NSW 2148</i></p>
+    <h4>Fairfield West</h4>
+    <p><i>11/368 Hamilton Rd, Fairfield West NSW 2165</i></p>
+    <h4>Pendle Hill</h4>
+    <p><i>136 Pendle Way, Pendle Hill NSW 2145</i></p>
+       <footer class="site-footer">
+                <div class="footer-links">
             <a href="{{ url_for('returns')}}">Return Policies</a>
             <a href="{{ url_for('aboutus')}}">About Us</a>
             <a href="{{ url_for('locations')}}">Store Locations</a>
@@ -92,6 +79,5 @@ window.onclick = function(event) {
         </div>
         <p class="footer-text">© 2025 Chemist Connect. All rights reserved.</p>
     </footer>
-    
 </body>
 </html>
