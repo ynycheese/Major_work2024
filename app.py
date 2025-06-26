@@ -99,12 +99,11 @@ def view_cart():
 
     if 'user_id' in session:
         user = connection.execute('SELECT points FROM users_database WHERE id = ?', (session['user_id'],)).fetchone()
-        if user:
+        if user and user['points'] is not None:
             user_points = user['points']
             if user_points >= 200:
                 discount = 10
-
-    total = max(subtotal - discount, 0)
+        total = max(subtotal - discount, 0)
 
     connection.close()
     return render_template('cartpage.html', cart=product_list, subtotal=subtotal, discount=discount, total=total, user_points=user_points)
