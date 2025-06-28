@@ -103,7 +103,7 @@ def view_cart():
             user_points = user['points']
             if user_points >= 200:
                 discount = 10
-        total = max(subtotal - discount, 0)
+    total = max(subtotal - discount, 0)
 
     connection.close()
     return render_template('cartpage.html', cart=product_list, subtotal=subtotal, discount=discount, total=total, user_points=user_points)
